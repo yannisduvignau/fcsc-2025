@@ -1,0 +1,18 @@
+services:
+  shrimp-say:
+    build:
+      context: ./src/shrimp-say
+    ports:
+      - "8000:80"
+
+  shrimp-say-bot:
+    build:
+      context: ./src/shrimp-say-bot
+    depends_on:
+      - shrimp-say
+    environment:
+      - PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
+      - CHALLENGE_HOST=http://shrimp-say/
+      - FLAG=FCSC{flag_placeholder}
+    ports:
+      - "4000:4000"

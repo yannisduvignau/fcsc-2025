@@ -25,6 +25,7 @@ Solution :
     source env/bin/activate
     echo "pwntools" > requirements.txt
     pip install -r requirements.txt
+    echo ".gitignore\nenv/" > .gitignore
     python3 template.py
     deactivate
 ```

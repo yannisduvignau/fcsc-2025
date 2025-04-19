@@ -14,6 +14,7 @@ Solution :
     source env/bin/activate
     echo "pycryptodome\nsympy" > requirements.txt
     pip install -r requirements.txt
+    echo ".gitignore\nenv/" > .gitignore
     python3 decode.py
     deactivate
 ```
