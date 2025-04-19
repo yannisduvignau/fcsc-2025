@@ -110,6 +110,6 @@ La fonction NON-ET est un opérateur logique de l'algèbre de Boole. À deux op�
 8. XNOR (Fonction NON-OU exclusif)
 
 
-![Fonctions logiques ANSI](./assets/img/circuit-elements.png)
+![Fonctions logiques ANSI](./assets/img/fonctions-logique.png)
 
 

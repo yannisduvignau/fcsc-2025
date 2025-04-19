@@ -13,5 +13,6 @@ Attention : Cette épreuve est limitée à trois essais.
 ```
 
 Solution : 
+![Reponses](./baddcircuit-responses.png)
 
-Résultat : FCSC{}
+Résultat : FCSC{0010}
