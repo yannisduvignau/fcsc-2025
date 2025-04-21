@@ -4,105 +4,81 @@ from zlib import crc32 as le_mac
 from Crypto.Cipher import AES
 
 class CocoRiCo_Chiffrement_AEAD:
-    def __init__(self, la_clef):
-        self.la_clef = la_clef
+	def __init__(self, la_clef):
+		self.la_clef = la_clef
 
-    def le_chiffrement(self):
-        return AES.new(self.la_clef, AES.MODE_OFB, iv=b"\x00" * 16)
+	def le_chiffrement(self):
+		return AES.new(self.la_clef, AES.MODE_OFB, iv = b"\x00" * 16)
 
-    def chiffrer_integre(self, le_message):
-        le_tag = int.to_bytes(le_mac(le_message), 4)
-        return self.le_chiffrement().encrypt(le_message + le_tag)
+	def chiffrer_integre(self, le_message):
+		le_tag = int.to_bytes(le_mac(le_message), 4)
+		return self.le_chiffrement().encrypt(le_message + le_tag)
 
-    def dechiffrer(self, le_chiffre):
-        x = self.le_chiffrement().decrypt(le_chiffre)
-        le_message, t = x[:-4], x[-4:]
-        le_tag = int.to_bytes(le_mac(le_message), 4)
-        if le_tag == t:
-            return le_message
-        else:
-            return b""
+	def dechiffrer(self, le_chiffre):
+		x = self.le_chiffrement().decrypt(le_chiffre)
+		le_message, t = x[:-4], x[-4:]
+		le_tag = int.to_bytes(le_mac(le_message), 4)
+		if le_tag == t:
+			return le_message
+		else:
+			return b""
 
 try:
-    la_clef = os.urandom(32)
-    E = CocoRiCo_Chiffrement_AEAD(la_clef)
+	la_clef = os.urandom(32)
+	E = CocoRiCo_Chiffrement_AEAD(la_clef)
 
-    for _ in "FCSC":
+	for _ in "FCSC":
 
-        print("0. Quit")
-        print("1. Login")
-        print("2. Logout")
-        print("3. TODO")
-        choice = int(input(">>> "))
+		print("0. Quit")
+		print("1. Login")
+		print("2. Logout")
+		print("3. TODO")
+		choice = int(input(">>> "))
 
-        if choice == 0:
-            break
+		if choice == 0:
+			break
 
-        elif choice == 1:
+		elif choice == 1:
 
-            new = input("Are you new ? (y/n) ")
-            if new == "y":
+			new = input("Are you new ? (y/n) ")
+			if new == "y":
 
-                name = input("Name: ")
-                if name == "toto":
-                    print("Toto is one of our admin! Do not try to outsmart the system!")
-                    exit(1)
+				name = input("Name: ")
+				if name == "toto":
+					print("Toto is one of our admin! Do not try to outsmart the system!")
+					exit(1)
 
-                # ⚠️ TODO 1 - VULN: Injection JSON
-                try:
-                    d = json.loads(name)
-                except:
-                    d = {
-                        "name": name,
-                        "admin": False,
-                    }
+				d = json.dumps({
+					"name": name,
+					"admin": False,
+				}).encode()
 
-                if not isinstance(d, dict):
-                    print("Invalid data!")
-                    continue
+				c = E.chiffrer_integre(d)
+				print(f"Welcome {name}. Here is your token:")
+				print(c.hex())
 
-                d = json.dumps(d).encode()
-                c = E.chiffrer_integre(d)
+				logged = 1
 
-                print(f"Welcome {name}. Here is your token:")
-                print(c.hex())
+				print("This challenge is still under active developement, please come back in a few weeks to try it out!")
+				# TODO: Add vulnerable code here
 
-                logged = 1
+			elif new == "n":
 
-                print("This challenge is still under active developement, please come back in a few weeks to try it out!")
+				token = bytes.fromhex(input("Token: "))
+				x = E.dechiffrer(token)
+				d = json.loads(x)
+				if d["name"] == "toto" and d["admin"]:
+					print("Congrats! Here is your flag:")
+					print(open("flag.txt").read().strip())
+				else:
+					print(f"Weclome back {d['name']}!")
 
-            elif new == "n":
+		elif choice == 2:
+			logged = 0
 
-                token = bytes.fromhex(input("Token: "))
-                x = E.dechiffrer(token)
-                d = json.loads(x)
-                if d["name"] == "toto" and d["admin"]:
-                    print("Congrats! Here is your flag:")
-                    print(open("flag.txt").read().strip())
-                else:
-                    print(f"Weclome back {d['name']}!")
+		elif choice == 3:
+			print("This challenge is still under active developement, please come back in a few weeks to try it out!")
+			# TODO: Add another vuln here
 
-        elif choice == 2:
-            logged = 0
-
-        elif choice == 3:
-            print("Experimental token editor.")
-            token = bytes.fromhex(input("Token: "))
-            pt = E.le_chiffrement().decrypt(token)
-
-            print(f"Decrypted token: {pt}")
-            new_data = input("New JSON content (will ignore tag verification): ").encode()
-
-            # ⚠️ TODO 2 - VULN: No MAC check, reencrypt arbitrary data
-            if b'"admin": true' in new_data:
-                print("Naughty! 😈")
-
-            tag = int.to_bytes(le_mac(new_data), 4)
-            new_token = E.le_chiffrement().encrypt(new_data + tag)
-
-            print("Here is your forged token:")
-            print(new_token.hex())
-
-except Exception as e:
-    print("Please check your inputs.")
-    print(e)
+except:
+	print("Please check your inputs.")

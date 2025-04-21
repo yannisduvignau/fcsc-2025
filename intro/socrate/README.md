@@ -15,7 +15,7 @@ Format du flag : FCSC{/var/www/***/************/}
 
 Solution : 
 ```bash
-    tar -xvf /chemin/vers/socrate.tar.xz
+    tar -xvf socrate.tar.xz
     cd socrate
     rm -r windows
     cd linux

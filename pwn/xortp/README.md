@@ -12,13 +12,12 @@ Enoncé : Vous pouvez chiffrer n'importe quel fichier du système avec un mécan
 
 Solution : 
 ```bash
-    gcc xortp.c -o xortp
     python3 -m venv env
     source env/bin/activate
-    echo "binascii" > requirements.txt
+    echo "pwntools" > requirements.txt
     pip install -r requirements.txt
     echo ".gitignore\nenv/" > .gitignore
-    python3 rexor.py
+    python3 decode.py
     deactivate
 ```
 
